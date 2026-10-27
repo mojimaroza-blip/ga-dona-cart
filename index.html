@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ga Dona | Order Online</title>
+<style>
+:root{--yellow:#ffe000;--red:#e52a37;--black:#111;--paper:#fffdf2;--muted:#666}
+*{box-sizing:border-box}body{margin:0;background:#111;color:#fff;font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{padding:26px 18px;text-align:center;background:linear-gradient(135deg,#050505,#242424);border-bottom:3px solid var(--yellow)}
+.brand{font-weight:1000;letter-spacing:.06em;font-size:clamp(2rem,6vw,4rem);color:var(--yellow);line-height:1}
+header p{margin:10px 0 0;color:#eee}
+.wrap{max-width:1180px;margin:auto;padding:18px}
+.heroimg{display:block;width:100%;max-height:480px;object-fit:cover;object-position:center 45%;border:2px solid var(--yellow);border-radius:14px;margin:0 auto 22px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:20px;align-items:start}
+h2{color:var(--yellow);margin:28px 0 12px;font-size:1.5rem}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.item{background:#1d1d1d;border:1px solid #4a4a4a;border-radius:12px;padding:14px;display:flex;flex-direction:column;min-height:165px}
+.item h3{margin:0 0 5px;font-size:1.03rem}
+.item p{color:#ccc;margin:0 0 12px;font-size:.9rem;flex:1}
+.price{font-size:1.15rem;font-weight:900;color:var(--yellow);margin-bottom:10px}
+button{border:0;border-radius:9px;background:var(--yellow);color:#111;font-weight:850;padding:10px 12px;cursor:pointer}
+button:hover{filter:brightness(.93)}button:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.cart{position:sticky;top:14px;background:#fffdf2;color:#161616;border-radius:14px;padding:17px;border:2px solid var(--yellow)}
+.cart h2{color:#111;margin:0 0 10px}.cart-empty{color:#666}
+.cart-row{display:grid;grid-template-columns:1fr auto;gap:8px;border-bottom:1px solid #ddd;padding:10px 0}
+.cart-row small{display:block;color:#666}
+.qty{display:flex;align-items:center;gap:7px;margin-top:6px}
+.qty button{padding:3px 9px;background:#eee}
+.remove{background:transparent;color:#a00;padding:2px 0;font-size:.8rem}
+.total{display:flex;justify-content:space-between;font-size:1.2rem;font-weight:900;padding:15px 0}
+.checkout{width:100%;background:var(--red);color:white;padding:13px}
+.help{font-size:.83rem;color:#555;margin:10px 0 0}
+footer{text-align:center;color:#bbb;padding:28px 12px;border-top:1px solid #333;margin-top:25px}
+@media(max-width:800px){.layout{grid-template-columns:1fr}.cart{position:static;grid-row:1}.wrap{padding:12px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">GA DONA</div>
+  <p>Good Food • Great Taste • Always Fresh</p>
+</header>
+<main class="wrap">
+  <img class="heroimg" src="assets/ga-dona-kota-menu.jpg" alt="Ga Dona Kota Menu">
+  <div class="layout">
+    <section aria-label="Menu">
+      <h2>🍟 Chips</h2><div class="products" id="chips"></div>
+      <h2>🥤 Soft Drinks</h2><div class="products" id="drinks"></div>
+      <h2>🥫 Cans</h2><div class="products" id="cans"></div>
+      <h2>➕ Extras</h2><div class="products" id="extras"></div>
+      <h2>👑 Kota Menu</h2><div class="products" id="kotas"></div>
+    </section>
+    <aside class="cart" aria-label="Shopping cart">
+      <h2>🛒 Your Cart <span id="cart-count">(0)</span></h2>
+      <div id="cart-items"><p class="cart-empty">Your cart is empty. Add something tasty!</p></div>
+      <div class="total"><span>Total</span><span id="cart-total">R0.00</span></div>
+      <button class="checkout" id="checkout">Continue to payment</button>
+      <p class="help">Payment is not connected yet. Add your secure payment integration before accepting orders.</p>
+    </aside>
+  </div>
+</main>
+<footer>© <span id="year"></span> Ga Dona • Please confirm availability and collection/delivery details with the store.</footer>
+<script>
+const menu = {
+  chips: [
+    ["Small Chips",25],["Medium Chips",30],["Large Chips",35],["Extra Large Chips",42]
+  ],
+  drinks: [
+    ["2 Litre (Flavoured)",30],["2 Litre (Coke)",33],["1.25 Litre",17],["1.5 Litre Cappy Juice",40]
+  ],
+  cans: [
+    ["Coke Can",15],["Cappy Can",20],["Dry Lemmon Can",23],["Tonic Water Can",23]
+  ],
+  extras: [
+    ["Egg",5],["Vianna",7],["Cheese",5],["Polony",5],["Russian",15]
+  ],
+  kotas: [
+    ["Budget Kota",25,"Chips, atchaar, polony, vienna & lettuce"],
+    ["Cheese / Egg Choice",28,"Chips, atchaar, polony, vienna, lettuce & cheese OR egg"],
+    ["Cheese Egg Combo",30,"Chips, atchaar, polony, vienna, lettuce, egg & cheese"],
+    ["Meaty Kota",32,"Chips, atchaar, polony, vienna, lettuce & russian"],
+    ["Meaty Cheese/Egg Choice",35,"Chips, atchaar, polony, vienna, lettuce, russian & egg OR cheese"],
+    ["Fully Loaded",45,"Chips, atchaar, polony, vienna, lettuce, russian, cheese & egg"]
+  ]
+};
+const cart = new Map();
+const money = n => "R" + n.toFixed(2);
+function keyFor(name){return name;}
+function addItem(name, price){
+  const key=keyFor(name), old=cart.get(key);
+  cart.set(key,{name,price,qty:(old?.qty||0)+1});
+  renderCart();
+}
+function renderProducts(){
+  for(const [category,items] of Object.entries(menu)){
+    const root=document.getElementById(category);
+    root.innerHTML=items.map(([name,price,desc])=>`
+      <article class="item">
+        <h3>${name}</h3>
+        ${desc?`<p>${desc}</p>`:'<p>Freshly prepared. Add to your order.</p>'}
+        <div class="price">${money(price)}</div>
+        <button type="button" data-name="${name}" data-price="${price}">Add to cart</button>
+      </article>`).join("");
+    root.querySelectorAll("button").forEach(btn=>btn.addEventListener("click",()=>addItem(btn.dataset.name,Number(btn.dataset.price))));
+  }
+}
+function renderCart(){
+  const root=document.getElementById("cart-items");
+  const rows=[...cart.values()];
+  document.getElementById("cart-count").textContent=`(${rows.reduce((n,x)=>n+x.qty,0)})`;
+  document.getElementById("cart-total").textContent=money(rows.reduce((n,x)=>n+x.price*x.qty,0));
+  if(!rows.length){root.innerHTML='<p class="cart-empty">Your cart is empty. Add something tasty!</p>';return;}
+  root.innerHTML=rows.map(x=>`
+    <div class="cart-row">
+      <div><strong>${x.name}</strong><small>${money(x.price)} each</small>
+      <div class="qty">
+        <button type="button" aria-label="Decrease ${x.name}" data-action="minus" data-name="${x.name}">−</button>
+        <span>${x.qty}</span>
+        <button type="button" aria-label="Increase ${x.name}" data-action="plus" data-name="${x.name}">+</button>
+      </div></div>
+      <div style="text-align:right"><strong>${money(x.price*x.qty)}</strong><br>
+      <button class="remove" type="button" data-action="remove" data-name="${x.name}">Remove</button></div>
+    </div>`).join("");
+  root.querySelectorAll("button").forEach(btn=>btn.addEventListener("click",()=>{
+    const x=cart.get(btn.dataset.name); if(!x)return;
+    if(btn.dataset.action==="plus")x.qty++;
+    if(btn.dataset.action==="minus")x.qty--;
+    if(btn.dataset.action==="remove"||x.qty<=0)cart.delete(btn.dataset.name);
+    renderCart();
+  }));
+}
+document.getElementById("checkout").addEventListener("click",()=>{
+  if(!cart.size){alert("Your cart is empty. Add a product first.");return;}
+  alert("Your cart is ready, but online payment is not connected yet. Configure a secure checkout integration before taking orders. Do not ask customers to send bank details through this page.");
+});
+document.getElementById("year").textContent=new Date().getFullYear();
+renderProducts();renderCart();
+</script>
+</body>
+</html>
