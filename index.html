@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ga Dona | Place an Order</title>
+<style>
+:root{--yellow:#ffe000;--red:#e52b37;--dark:#111;--card:#1d1d1d;--line:#454545;--green:#177a45}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#101010;color:#fff}
+header{text-align:center;padding:25px 16px;background:linear-gradient(120deg,#050505,#292929);border-bottom:3px solid var(--yellow)}
+header h1{font-size:clamp(30px,6vw,48px);margin:0;color:var(--yellow);font-weight:900;letter-spacing:2px}
+header p{margin:8px 0 0;color:#eee}
+main{max-width:1150px;margin:auto;padding:20px 14px 38px}
+.banner{display:block;width:100%;max-height:380px;object-fit:cover;object-position:center 45%;border:2px solid var(--yellow);border-radius:14px;margin-bottom:22px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:20px;align-items:start}
+h2{color:var(--yellow);margin:22px 0 12px;font-size:23px}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:12px}
+.product{border:1px solid var(--line);border-radius:13px;padding:15px;background:var(--card);display:flex;flex-direction:column;gap:9px;min-height:190px}
+.product h3{margin:0;font-size:17px}.description{color:#d0d0d0;font-size:13px;line-height:1.45;flex:1}.price{font-size:22px;font-weight:800;color:var(--yellow)}
+button{border:0;border-radius:9px;padding:11px 13px;font-weight:800;cursor:pointer}button:focus,input:focus,select:focus,textarea:focus{outline:3px solid #fff08a;outline-offset:2px}
+.add{background:var(--yellow);color:#111}.cart{background:#fffdf4;color:#151515;border:2px solid var(--yellow);border-radius:14px;padding:17px;position:fixed;z-index:1001;right:18px;bottom:86px;width:min(430px,calc(100vw - 24px));max-height:calc(100dvh - 115px);overflow:auto;box-shadow:0 14px 45px rgba(0,0,0,.55);display:none}.cart.is-open{display:block}.cart-toggle{position:fixed;z-index:1002;right:18px;bottom:18px;background:var(--yellow);color:#111;border:2px solid #fff;border-radius:999px;padding:14px 20px;box-shadow:0 5px 20px rgba(0,0,0,.45);font-size:16px}.cart-close{float:right;background:#222;color:#fff;padding:6px 10px;margin:-4px -4px 8px 10px}.cart-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:none}.cart-backdrop.is-open{display:block}
+.cart h2{color:#111;margin:0 0 12px}.empty{color:#686868}.cart-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:11px 0;border-bottom:1px solid #ddd}.cart-row small{display:block;color:#666}.qty{display:flex;gap:7px;align-items:center;margin-top:7px}.qty button{padding:4px 10px;background:#eee}.remove{background:transparent;color:#a11;padding:3px}
+.total-line{display:flex;justify-content:space-between;gap:10px;margin-top:15px;font-size:21px;font-weight:900}
+form{margin-top:18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700}input,select,textarea{width:100%;padding:11px;border:1px solid #ccc;border-radius:8px;font:inherit;background:#fff;color:#111}.full{grid-column:1/-1}.checkout{width:100%;margin-top:14px;background:var(--red);color:white;font-size:16px}.note{font-size:12px;line-height:1.5;color:#666}.status{margin-top:12px;padding:12px;border-radius:8px;background:#fff1cf;color:#222;display:none;white-space:pre-wrap;overflow-wrap:anywhere}
+.site-nav{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:16px}.site-nav a{color:#111;background:var(--yellow);padding:9px 16px;border-radius:999px;text-decoration:none;font-weight:800}
+footer{text-align:center;background:#050505;color:#ddd;padding:18px;font-size:13px;border-top:2px solid var(--yellow)}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.cart{position:fixed;grid-row:auto;right:12px;bottom:78px;width:calc(100vw - 24px);max-height:calc(100dvh - 100px)}}
+@media(max-width:560px){main{padding:13px 10px 30px}.products{grid-template-columns:repeat(2,minmax(0,1fr))}.product{padding:11px;min-height:205px}.product h3{font-size:15px}.price{font-size:19px}form{grid-template-columns:1fr}.full{grid-column:auto}.banner{max-height:250px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>👑 GA DONA</h1>
+  <p>Good Food • Great Taste • Always Fresh</p>
+</header>
+<main>
+  <div class="layout">
+    <section aria-label="Ga Dona menu">
+      <h2>🍟 Chips</h2><div class="products" id="chips"></div>
+      <h2>🥤 Soft Drinks</h2><div class="products" id="drinks"></div>
+      <h2>🥫 Cans</h2><div class="products" id="cans"></div>
+      <h2>➕ Extras</h2><div class="products" id="extras"></div>
+      <h2>👑 Kota Menu</h2><div class="products" id="kotas"></div>
+    </section>
+    <aside class="cart" id="shopping-cart" aria-label="Shopping cart" aria-hidden="true">
+      <button class="cart-close" id="cart-close" type="button" aria-label="Close cart">✕ Close</button>
+      <h2>🛒 Your Shopping Cart <span id="cart-count">(0)</span></h2>
+      <div id="cart-items"><p class="empty">Your cart is empty. Add something delicious from the menu.</p></div>
+      <div class="total-line" style="font-size:16px;font-weight:700"><span>Subtotal</span><span id="subtotal">R0.00</span></div>
+      <div class="total-line" style="font-size:16px;font-weight:700;margin-top:8px"><span>Delivery fee</span><span id="delivery-fee">R0.00</span></div>
+      <div class="total-line"><span>Total</span><span id="total">R0.00</span></div>
+      <h2 style="margin-top:24px">Customer Details</h2>
+      <form id="order-form">
+        <label>Full name *
+          <input name="customerName" autocomplete="name" required placeholder="Your full name">
+        </label>
+        <label>Phone number *
+          <input name="phone" type="tel" autocomplete="tel" required placeholder="e.g. 071 234 5678">
+        </label>
+        <label>Order method *
+          <select name="fulfilment" id="fulfilment" required>
+            <option value="Collection">Collection</option>
+            <option value="Delivery">Delivery (confirm availability)</option>
+          </select>
+        </label>
+        <label id="address-label" style="display:none">Delivery address *
+          <input name="address" autocomplete="street-address" placeholder="Street, suburb, house number">
+        </label>
+        <div class="full" id="map-location-wrap" style="display:none">
+          <label for="map-location">Google Maps location link (optional)</label>
+          <input id="map-location" name="mapLocation" type="url" placeholder="Paste your Google Maps link here">
+          <button class="add" id="use-location" type="button" style="margin-top:8px">📍 Use My Current Location</button>
+          <p class="note" style="margin:7px 0 0">Allow location access when your browser asks. You can also paste a Google Maps link. Please check the address before sending.</p>
+        </div>
+        <label class="full">Special instructions (optional)
+          <textarea name="notes" rows="2" placeholder="Kota choices, changes or other instructions"></textarea>
+        </label>
+      </form>
+      <button class="checkout" id="checkout">Prepare My Order</button>
+      <p class="note">Delivery costs a fixed R15 extra. Collection has no delivery fee. Online payment is not connected yet; confirm delivery availability and payment arrangements with Ga Dona.</p>
+      <div class="status" id="status" role="status"></div>
+    </aside>
+  </div>
+</main>
+<div class="cart-backdrop" id="cart-backdrop"></div>
+<button class="cart-toggle" id="cart-toggle" type="button" aria-controls="shopping-cart" aria-expanded="false">🛒 Cart <span id="floating-cart-count">(0)</span></button>
+<footer>Ga Dona · Kota ke kota ka borotho · Thank you for your support!</footer>
+<script>
+const menu = [
+  {category:"chips",id:"small-chips",name:"Small Chips",price:25,emoji:"🍟",description:"Small portion of chips."},
+  {category:"chips",id:"medium-chips",name:"Medium Chips",price:30,emoji:"🍟",description:"Medium portion of chips."},
+  {category:"chips",id:"large-chips",name:"Large Chips",price:35,emoji:"🍟",description:"Large portion of chips."},
+  {category:"chips",id:"extra-large-chips",name:"Extra Large Chips",price:42,emoji:"🍟",description:"Extra large portion of chips."},
+
+  {category:"drinks",id:"flavoured-2l",name:"2 Litre (Flavoured)",price:30,emoji:"🥤",description:"2 litre flavoured soft drink."},
+  {category:"drinks",id:"coke-2l",name:"2 Litre (Coke)",price:33,emoji:"🥤",description:"2 litre Coke."},
+  {category:"drinks",id:"drink-125l",name:"1.25 Litre",price:17,emoji:"🥤",description:"1.25 litre soft drink."},
+  {category:"drinks",id:"cappy-juice",name:"1.5 Litre Cappy Juice",price:40,emoji:"🧃",description:"1.5 litre Cappy juice."},
+
+  {category:"cans",id:"coke-can",name:"Coke Can",price:15,emoji:"🥫",description:"Coke can."},
+  {category:"cans",id:"cappy-can",name:"Cappy Can",price:20,emoji:"🥫",description:"Cappy can."},
+  {category:"cans",id:"dry-lemmon",name:"Dry Lemmon",price:23,emoji:"🥫",description:"Dry Lemmon can (spelling as shown on menu)."},
+  {category:"cans",id:"tonic-water",name:"Tonic Water",price:23,emoji:"🥫",description:"Tonic water can."},
+
+  {category:"extras",id:"egg",name:"Egg",price:5,emoji:"🥚",description:"Add an egg."},
+  {category:"extras",id:"vianna",name:"Vianna",price:7,emoji:"🌭",description:"Add vienna (menu spelling: Vianna)."},
+  {category:"extras",id:"cheese",name:"Cheese",price:5,emoji:"🧀",description:"Add cheese."},
+  {category:"extras",id:"polony",name:"Polony",price:5,emoji:"🍖",description:"Add polony."},
+  {category:"extras",id:"russian",name:"Russian",price:15,emoji:"🌭",description:"Add a Russian sausage."},
+
+  {category:"kotas",id:"budget-kota",name:"Budget Kota",price:25,emoji:"🍔",description:"Chips, atchaar, polony, vienna and lettuce."},
+  {category:"kotas",id:"cheese-egg-choice",name:"Cheese / Egg Choice",price:28,emoji:"🍔",description:"Chips, atchaar, polony, vienna, lettuce and your choice of cheese OR egg."},
+  {category:"kotas",id:"cheese-egg-combo",name:"Cheese Egg Combo",price:30,emoji:"🍔",description:"Chips, atchaar, polony, vienna, lettuce, egg and cheese."},
+  {category:"kotas",id:"meaty-kota",name:"Meaty Kota",price:32,emoji:"🍔",description:"Chips, atchaar, polony, vienna, lettuce and Russian."},
+  {category:"kotas",id:"meaty-cheese-egg",name:"Meaty Cheese/Egg Choice",price:35,emoji:"🍔",description:"Chips, atchaar, polony, vienna, lettuce, Russian and your choice of egg OR cheese."},
+  {category:"kotas",id:"fully-loaded",name:"Fully Loaded Kota",price:45,emoji:"👑",description:"Chips, atchaar, polony, vienna, lettuce, Russian, cheese and egg."}
+];
+const cart = {};
+const money = n => "R" + n.toFixed(2);
+const cartEl = document.getElementById("cart-items");
+const totalEl = document.getElementById("total");
+const subtotalEl = document.getElementById("subtotal");
+const deliveryFeeEl = document.getElementById("delivery-fee");
+const statusEl = document.getElementById("status");
+const DELIVERY_FEE = 15;
+for (const category of ["chips","drinks","cans","extras","kotas"]) {
+  const root = document.getElementById(category);
+  root.innerHTML = menu.filter(item=>item.category===category).map(item=>`
+    <article class="product">
+      <div style="font-size:30px" aria-hidden="true">${item.emoji}</div>
+      <h3>${item.name}</h3>
+      <div class="description">${item.description}</div>
+      <div class="price">${money(item.price)}</div>
+      <button class="add" type="button" data-add="${item.id}">Add to Cart</button>
+    </article>`).join("");
+  root.addEventListener("click",event=>{
+    const b=event.target.closest("[data-add]"); if(!b)return;
+    cart[b.dataset.add]=(cart[b.dataset.add]||0)+1; renderCart();
+  });
+}
+function renderCart(){
+  const chosen=menu.filter(item=>(cart[item.id]||0)>0);
+  const itemCount=chosen.reduce((n,item)=>n+cart[item.id],0);
+  document.getElementById("cart-count").textContent="("+itemCount+")";
+  document.getElementById("floating-cart-count").textContent="("+itemCount+")";
+  if(!chosen.length) cartEl.innerHTML='<p class="empty">Your cart is empty. Add something delicious from the menu.</p>';
+  else cartEl.innerHTML=chosen.map(item=>`
+    <div class="cart-row">
+      <div><strong>${item.name}</strong><small>${money(item.price)} each</small>
+        <div class="qty">
+          <button type="button" data-minus="${item.id}" aria-label="Remove one ${item.name}">−</button>
+          <strong>${cart[item.id]}</strong>
+          <button type="button" data-plus="${item.id}" aria-label="Add one ${item.name}">+</button>
+        </div>
+      </div>
+      <div style="text-align:right"><strong>${money(item.price*cart[item.id])}</strong><br><button class="remove" type="button" data-remove="${item.id}">Remove</button></div>
+    </div>`).join("");
+  const subtotal=menu.reduce((sum,item)=>sum+item.price*(cart[item.id]||0),0);
+  const deliveryFee=fulfilment.value==="Delivery" ? DELIVERY_FEE : 0;
+  subtotalEl.textContent=money(subtotal);
+  deliveryFeeEl.textContent=money(deliveryFee);
+  totalEl.textContent=money(subtotal+deliveryFee);
+}
+cartEl.addEventListener("click",event=>{
+  const b=event.target.closest("button");if(!b)return;
+  const id=b.dataset.plus||b.dataset.minus||b.dataset.remove;if(!id)return;
+  if(b.dataset.plus)cart[id]=(cart[id]||0)+1;
+  if(b.dataset.minus)cart[id]=Math.max(0,(cart[id]||0)-1);
+  if(b.dataset.remove)cart[id]=0;
+  renderCart();
+});
+const shoppingCart=document.getElementById("shopping-cart");
+const cartToggle=document.getElementById("cart-toggle");
+const cartBackdrop=document.getElementById("cart-backdrop");
+function setCartOpen(open){
+  shoppingCart.classList.toggle("is-open",open);
+  cartBackdrop.classList.toggle("is-open",open);
+  shoppingCart.setAttribute("aria-hidden",String(!open));
+  cartToggle.setAttribute("aria-expanded",String(open));
+  cartToggle.innerHTML=(open?"✕ Close Cart ":"🛒 Cart ")+document.getElementById("floating-cart-count").textContent;
+  document.body.style.overflow=open?"hidden":"";
+}
+cartToggle.addEventListener("click",()=>setCartOpen(!shoppingCart.classList.contains("is-open")));
+document.getElementById("cart-close").addEventListener("click",()=>setCartOpen(false));
+cartBackdrop.addEventListener("click",()=>setCartOpen(false));
+document.addEventListener("keydown",event=>{if(event.key==="Escape")setCartOpen(false);});
+const fulfilment=document.getElementById("fulfilment");
+const addressLabel=document.getElementById("address-label");
+const mapLocationWrap=document.getElementById("map-location-wrap");
+const mapLocationInput=document.getElementById("map-location");
+fulfilment.addEventListener("change",()=>{
+  const isDelivery=fulfilment.value==="Delivery";
+  addressLabel.style.display=isDelivery?"flex":"none";
+  mapLocationWrap.style.display=isDelivery?"block":"none";
+  addressLabel.querySelector("input").required=isDelivery;
+  renderCart();
+});
+
+document.getElementById("use-location").addEventListener("click",()=>{
+  if(!navigator.geolocation){
+    statusEl.style.display="block";
+    statusEl.textContent="Your browser does not support location sharing. Please paste a Google Maps link or enter your delivery address.";
+    return;
+  }
+  statusEl.style.display="block";
+  statusEl.textContent="Requesting your location… Please allow location access in your browser.";
+  navigator.geolocation.getCurrentPosition(
+    position=>{
+      const lat=position.coords.latitude;
+      const lon=position.coords.longitude;
+      mapLocationInput.value=`https://www.google.com/maps?q=${lat},${lon}`;
+      statusEl.textContent="Location added. Your Google Maps link will be included with your WhatsApp order.";
+    },
+    ()=>{
+      statusEl.textContent="Could not get your location. Allow location access, or paste a Google Maps link and enter your address manually.";
+    },
+    {enableHighAccuracy:true,timeout:10000,maximumAge:60000}
+  );
+});
+document.getElementById("checkout").addEventListener("click",()=>{
+  const chosen=menu.filter(item=>(cart[item.id]||0)>0);
+  if(!chosen.length){statusEl.style.display="block";statusEl.textContent="Please add at least one item to your cart.";return;}
+  const form=document.getElementById("order-form");if(!form.reportValidity())return;
+  const data=new FormData(form);
+  const subtotal=menu.reduce((sum,item)=>sum+item.price*(cart[item.id]||0),0);
+  const deliveryFee=data.get("fulfilment")==="Delivery" ? DELIVERY_FEE : 0;
+  const total=subtotal+deliveryFee;
+  const lines=chosen.map(item=>`${cart[item.id]} x ${item.name} = ${money(item.price*cart[item.id])}`);
+  const message=[
+    "Hello Ga Dona! I would like to place an order:","",...lines,"",
+    `Subtotal: ${money(subtotal)}`,`Delivery fee: ${money(deliveryFee)}`,`Total: ${money(total)}`,`Name: ${data.get("customerName")}`,`Phone: ${data.get("phone")}`,
+    `Order method: ${data.get("fulfilment")}`,data.get("address")?`Address: ${data.get("address")}`:"",
+    data.get("mapLocation")?`Map location: ${data.get("mapLocation")}`:"",
+    data.get("notes")?`Instructions: ${data.get("notes")}`:"",
+    "Please confirm availability and payment arrangements."
+  ].filter(Boolean).join("\n");
+  statusEl.style.display="block";
+statusEl.textContent="Opening WhatsApp with your order. If WhatsApp does not open, check that it is installed or try again in your browser.\\n\\n"+message;
+  // WhatsApp number in international format without + or spaces. Confirm this is Ga Dona\'s correct number before publishing.
+  const businessWhatsAppNumber="27634018638";
+  if(/^\d{10,15}$/.test(businessWhatsAppNumber)){
+    window.open("https://wa.me/"+businessWhatsAppNumber+"?text="+encodeURIComponent(message),"_blank","noopener");
+  }
+});
+renderCart();
+</script>
+</body>
+</html>
